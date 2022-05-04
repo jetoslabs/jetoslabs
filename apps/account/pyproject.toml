@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "account"
+version = "0.1.0"
+description = ""
+authors = ["Anurag Jha <toanuragjha@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.11"
+logger = {path = "../../libs/logger"}
+common = {path = "../../libs/common"}
+eth-account = "^0.6.1"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
