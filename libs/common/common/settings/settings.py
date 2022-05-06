@@ -15,10 +15,10 @@ class Settings(BaseSettings):
     CONTACT_EMAIL = "toanuragjha@gmail.com"
     # Uvicorn
     HOST = "localhost"
-    PORT = 8001
+    PORT = 8080
     APP_RELOAD = True
     APP_WORKERS = 1
     API_V1_STR = "v1"
     # Configuration
     CONFIGURATION_PATH = ""
-    CONFIGURATION_LOC = "../configuration"
+    CONFIGURATION_LOC = "../../../../jetos-config-dev"

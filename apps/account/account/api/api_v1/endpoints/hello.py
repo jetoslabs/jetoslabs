@@ -2,6 +2,7 @@ from fastapi import APIRouter
 from fastapi.requests import Request
 
 from account.controller import controller
+from account.core.server_resources import server_resources
 from account.schemas.schemas_account import NewAccountReq, NewAccountRes, GenAccountRes, GenAccountReq
 from common.aws.s3 import create_bucket, list_buckets, upload_file, download_file
 
@@ -17,6 +18,13 @@ def hello(req: Request):
     logger = req.scope.get("logger")
     logger.debug("/hello")
     return "hello"
+
+
+@router.get("/config")
+def get_config(req: Request):
+    logger = req.scope.get("logger")
+    logger.debug("/config")
+    return server_resources.config
 
 
 @router.post("/new_account", response_model=NewAccountRes)

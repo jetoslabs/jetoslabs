@@ -5,7 +5,9 @@ from account.core.description import description
 from account.core.logger import logger
 from account.core.server_resources import server_resources
 from account.core.settings import settings
+from common.config.config import load_config_folder
 from common.fastapi_factory.fastapi_factory import FastAPIFactory
+from logger import setup_logger
 
 
 def create_app():
@@ -23,6 +25,11 @@ app = create_app()
 
 @app.on_event("startup")
 async def startup():
+    setup_logger()
+    # Init all required server_resources fields
+    # setup config
+    server_resources.config = load_config_folder(settings.CONFIGURATION_LOC)
+    # setup http_client
     server_resources.init_http_client()
 
 
