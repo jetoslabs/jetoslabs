@@ -6,6 +6,9 @@ from common.config.schemas.schema_config import Config
 
 
 class ServerResources():
+    """
+    Act as ServerResources object store. Contains resources to be used by App server
+    """
 
     def __init__(self):
         self.config: Optional[Config] = None
