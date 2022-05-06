@@ -21,4 +21,4 @@ class Settings(BaseSettings):
     API_V1_STR = "v1"
     # Configuration
     CONFIGURATION_PATH = ""
-    CONFIGURATION_LOC = "../../../../jetos-config-dev"
+    CONFIGURATION_LOC = "../../../../jetoslabs-config-dev"
