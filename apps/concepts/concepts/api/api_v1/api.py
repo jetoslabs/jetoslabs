@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from account.api.api_v1.endpoints import hello
+from concepts.api.api_v1.endpoints import hello
 
 router = APIRouter()
 

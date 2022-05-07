@@ -1,3 +1,10 @@
+Concepts
+--------------------------------------------------
+1. config
+2.
+
+
+
 Account App
 =====
 Guiding light - https://geth.ethereum.org/docs/dapp/native-accounts

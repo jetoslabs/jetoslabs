@@ -1,4 +1,4 @@
-from account import __version__
+from concepts import __version__
 
 
 def test_version():

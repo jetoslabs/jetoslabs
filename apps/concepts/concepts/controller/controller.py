@@ -5,7 +5,7 @@ from aiohttp import ClientResponse
 from eth_account import Account
 from eth_account.signers.local import LocalAccount
 
-from account.core.server_resources import server_resources
+from concepts.core.server_resources import server_resources
 from common.decorators.retry import retry
 
 
