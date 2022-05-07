@@ -1,4 +1,4 @@
-# py-jetos
+# Jetoslabs
 monorepo for python services
 
 
