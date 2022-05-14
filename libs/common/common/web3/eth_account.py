@@ -36,7 +36,13 @@ def sign(msg, private_key):
     return signed_message
 
 
-def verify(msg, signed_message):
+def verify_return_address(msg, signed_message):
     message = encode_defunct(text=msg)
     address = w3.eth.account.recover_message(message, signature=signed_message.signature)
     return address
+
+
+def verify(msg, signed_message, from_address):
+    # message = encode_defunct(text=msg)
+    # address = w3.eth.account.recover_message(message, signature=signed_message.signature)
+    return from_address == verify_return_address(msg, signed_message)

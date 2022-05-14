@@ -1,4 +1,4 @@
-from common.web3.eth_account import sign, verify
+from common.web3.eth_account import sign, verify_return_address
 
 
 def test_sign_and_verify():
@@ -8,6 +8,6 @@ def test_sign_and_verify():
 
     s = sign(msg, key)
     # print(f"\n{s}\n")
-    v = verify(msg, s)
+    v = verify_return_address(msg, s)
     # print(f"{v}\n")
     assert v == address
