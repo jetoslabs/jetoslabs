@@ -8,7 +8,6 @@ authors = ["Anurag Jha <toanuragjha@gmail.com>"]
 python = ">=3.10,<3.11"
 logger = {path = "../../libs/logger"}
 common = {path = "../../libs/common"}
-eth-account = "^0.6.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
