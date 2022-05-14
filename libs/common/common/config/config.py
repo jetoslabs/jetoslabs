@@ -57,7 +57,7 @@ def load_tenant_config(tenant_config_folder_path, *, logger=loguru.logger):
             tenant_config_dict = yaml.safe_load(file)
             tenant_config = TenantConfig(**tenant_config_dict)
             logger.bind(tenant_config_file_path=tenant_config_file_path, tenant_config=tenant_config)\
-                .info(f"Tenant config loaded")
+                .info(f"Config loaded for tenant - {tenant_config.tenant}")
             return tenant_config
     except Exception as e:
         raise ConfigException() from e
