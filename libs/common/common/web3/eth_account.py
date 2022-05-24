@@ -1,4 +1,4 @@
-# https://web3py.readthedocs.io/en/stable/web3.eth.account.html
+# https://web3py.readthedocs.io/en/stable/web3.eth.account.html#working-with-local-private-keys
 # https://soliditydeveloper.com/ecrecover
 # https://soliditydeveloper.com/meta-transactions
 
@@ -7,7 +7,6 @@ from eth_account.signers.local import LocalAccount
 from pydantic import BaseModel
 from web3 import Web3
 
-from web3.auto import w3
 from eth_account.messages import encode_defunct, _hash_eip191_message
 
 
@@ -34,15 +33,15 @@ async def gen_from_mnemonic(mnemonic: str, passphrase: str = "") -> LocalAccount
     return account
 
 
-def sign_msg(msg, private_key):
+def sign_msg(w3_provider, msg, private_key):
     message = encode_defunct(text=msg)
-    signed_message = w3.eth.account.sign_message(message, private_key=private_key)
+    signed_message = w3_provider.eth.account.sign_message(message, private_key=private_key)
     return signed_message
 
 
-def recover(msg, signed_message, signer_address) -> str:
+def recover(w3_provider, msg, signed_message, signer_address) -> str:
     message = encode_defunct(text=msg)
-    address = w3.eth.account.recover_message(message, signature=signed_message.signature)
+    address = w3_provider.eth.account.recover_message(message, signature=signed_message.signature)
     if address != signer_address:
         return ""
     return address

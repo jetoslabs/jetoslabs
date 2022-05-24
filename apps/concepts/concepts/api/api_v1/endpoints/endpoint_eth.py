@@ -4,6 +4,8 @@ from web3 import Web3
 
 from common.web3 import eth_account
 from common.web3.eth_account import ecrecover_for_hex_message_and_signature, recover, sign_msg, ecrecover_from_locally_signed_message
+from common.web3.eth_tx import tx_sign
+
 from concepts.schemas.schemas_account import NewAccountReq, NewAccountRes, GenAccountRes, GenAccountReq
 
 router = APIRouter()
@@ -11,6 +13,9 @@ router = APIRouter()
 """
 Note: Using `Request` in route methods: a. to get logger contextualized by middlewares
 """
+
+# TODO: put in server resources
+w3_provider = Web3(Web3.HTTPProvider('HTTP://127.0.0.1:7545'))
 
 
 @router.post("/new_account", response_model=NewAccountRes)
@@ -46,10 +51,10 @@ async def get_ecrecover_from_locally_signed_message(req: Request, msg: str, key:
     logger = req.scope.get("logger")
     logger.debug("/ecrecover_from_locally_signed_message")
 
-    signed_msg = sign_msg(msg, key)
+    signed_msg = sign_msg(w3_provider, msg, key)
     logger.debug(f"Signed message: {signed_msg}")
 
-    signed_address = recover(msg, signed_msg, address)
+    signed_address = recover(w3_provider, msg, signed_msg, address)
     if signed_address == "":
         raise Exception("recovered address should not be empty")
     # print(f"{v}\n")
@@ -65,10 +70,17 @@ async def get_ecrecover_for_hex_message_and_signature(req: Request, msg: str, ke
     hex_message = Web3.toHex(msg.encode('utf-8'))
     logger.debug(f"hex_message: {hex_message}")
 
-    signed_msg = sign_msg(msg, key)
+    signed_msg = sign_msg(w3_provider, msg, key)
     logger.debug(f"Signed message: {signed_msg}")
 
     hex_signature = Web3.toHex(signed_msg.signature)
     logger.debug(f"hex_signature: {hex_signature}")
 
     return ecrecover_for_hex_message_and_signature(hex_message, hex_signature)
+
+
+@router.get("/send_eth")
+async def get_send_eth(req: Request, from_address:str, from_key: str, to_address: str):
+    logger = req.scope.get("logger")
+    logger.debug("/tx_sign")
+    return tx_sign(w3_provider, from_address, from_key, to_address)

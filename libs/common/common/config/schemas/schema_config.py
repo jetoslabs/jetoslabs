@@ -19,9 +19,14 @@ class S3(BaseModel):
     default_object_prefix: str
 
 
+class Web3Provider(BaseModel):
+    provider_uri: str
+
+
 class TenantConfig(Tenant):
     aws: Optional[AWS]
     s3: Optional[S3]
+    web3: Optional[Web3Provider]
 
 
 class Config(BaseModel):
