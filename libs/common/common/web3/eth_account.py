@@ -34,7 +34,7 @@ async def gen_from_mnemonic(mnemonic: str, passphrase: str = "") -> LocalAccount
     return account
 
 
-def sign(msg, private_key):
+def sign_msg(msg, private_key):
     message = encode_defunct(text=msg)
     signed_message = w3.eth.account.sign_message(message, private_key=private_key)
     return signed_message

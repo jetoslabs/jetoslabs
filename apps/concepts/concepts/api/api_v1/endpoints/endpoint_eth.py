@@ -3,7 +3,7 @@ from fastapi.requests import Request
 from web3 import Web3
 
 from common.web3 import eth_account
-from common.web3.eth_account import ecrecover_for_hex_message_and_signature, recover, sign, ecrecover_from_locally_signed_message
+from common.web3.eth_account import ecrecover_for_hex_message_and_signature, recover, sign_msg, ecrecover_from_locally_signed_message
 from concepts.schemas.schemas_account import NewAccountReq, NewAccountRes, GenAccountRes, GenAccountReq
 
 router = APIRouter()
@@ -46,7 +46,7 @@ async def get_ecrecover_from_locally_signed_message(req: Request, msg: str, key:
     logger = req.scope.get("logger")
     logger.debug("/ecrecover_from_locally_signed_message")
 
-    signed_msg = sign(msg, key)
+    signed_msg = sign_msg(msg, key)
     logger.debug(f"Signed message: {signed_msg}")
 
     signed_address = recover(msg, signed_msg, address)
@@ -65,7 +65,7 @@ async def get_ecrecover_for_hex_message_and_signature(req: Request, msg: str, ke
     hex_message = Web3.toHex(msg.encode('utf-8'))
     logger.debug(f"hex_message: {hex_message}")
 
-    signed_msg = sign(msg, key)
+    signed_msg = sign_msg(msg, key)
     logger.debug(f"Signed message: {signed_msg}")
 
     hex_signature = Web3.toHex(signed_msg.signature)
