@@ -4,7 +4,7 @@ from web3 import Web3
 
 from common.web3 import eth_account
 from common.web3.eth_account import ecrecover_for_hex_message_and_signature, recover, sign_msg, ecrecover_from_locally_signed_message
-from common.web3.eth_tx import tx_sign
+from common.web3.eth_tx import send_eth
 
 from concepts.schemas.schemas_account import NewAccountReq, NewAccountRes, GenAccountRes, GenAccountReq
 
@@ -80,7 +80,7 @@ async def get_ecrecover_for_hex_message_and_signature(req: Request, msg: str, ke
 
 
 @router.get("/send_eth")
-async def get_send_eth(req: Request, from_address:str, from_key: str, to_address: str):
+async def get_send_eth(req: Request, from_address:str, from_key: str, to_address: str, ether: float):
     logger = req.scope.get("logger")
-    logger.debug("/tx_sign")
-    return tx_sign(w3_provider, from_address, from_key, to_address)
+    logger.debug("/send_eth")
+    return send_eth(w3_provider, from_address, from_key, to_address, ether)
