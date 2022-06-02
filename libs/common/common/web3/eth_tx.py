@@ -3,7 +3,7 @@ def send_eth(w3_provider, from_address: str, from_key: str, to_address: str, eth
     # get the nonce.  Prevents one from sending the transaction twice
     nonce = w3_provider.eth.getTransactionCount(from_address)
 
-    # creating transaction TODO: move it up the code chain
+    # creating transaction
     value = w3_provider.toWei(ether * 1, 'ether')
     transaction = {
         'to': to_address,
