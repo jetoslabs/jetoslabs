@@ -1,10 +1,12 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from fastapi.requests import Request
 from web3 import Web3
 
 from common.web3 import eth_account
 from common.web3.eth_account import ecrecover_for_hex_message_and_signature, recover, sign_msg, ecrecover_from_locally_signed_message
-from common.web3.eth_tx import send_eth
+from common.web3.eth_tx import send_eth, tx_sign_and_send
+from concepts.abi.abi import STORAGE_ABI
+from concepts.api.deps import get_w3_provider
 
 from concepts.schemas.schemas_account import NewAccountReq, NewAccountRes, GenAccountRes, GenAccountReq
 
@@ -14,12 +16,9 @@ router = APIRouter()
 Note: Using `Request` in route methods: a. to get logger contextualized by middlewares
 """
 
-# TODO: put in server resources
-w3_provider = Web3(Web3.HTTPProvider('HTTP://127.0.0.1:7545'))
-
 
 @router.post("/new_account", response_model=NewAccountRes)
-async def new_account(req: Request, req_body: NewAccountReq) -> NewAccountRes:
+async def post_new_account(req: Request, req_body: NewAccountReq) -> NewAccountRes:
     logger = req.scope.get("logger")
     logger.debug("/new_account")
     account, mnemonic = await eth_account.create_with_mnemonic(req_body.passphrase)
@@ -33,7 +32,7 @@ async def new_account(req: Request, req_body: NewAccountReq) -> NewAccountRes:
 
 
 @router.post("/gen_account", response_model=GenAccountRes)
-async def gen_account(req: Request, req_body: GenAccountReq) -> GenAccountRes:
+async def post_gen_account(req: Request, req_body: GenAccountReq) -> GenAccountRes:
     logger = req.scope.get("logger")
     logger.debug("/gen_account")
     account = await eth_account.gen_from_mnemonic(req_body.mnemonic, req_body.passphrase)
@@ -47,7 +46,7 @@ async def gen_account(req: Request, req_body: GenAccountReq) -> GenAccountRes:
 
 
 @router.post("/ecrecover_from_locally_signed_message")
-async def get_ecrecover_from_locally_signed_message(req: Request, msg: str, key: str, address: str):
+async def post_ecrecover_from_locally_signed_message(req: Request, msg: str, key: str, address: str, w3_provider: Web3 = Depends(get_w3_provider)):
     logger = req.scope.get("logger")
     logger.debug("/ecrecover_from_locally_signed_message")
 
@@ -63,7 +62,7 @@ async def get_ecrecover_from_locally_signed_message(req: Request, msg: str, key:
 
 
 @router.post("/ecrecover_for_hex_message_and_signature")
-async def get_ecrecover_for_hex_message_and_signature(req: Request, msg: str, key: str, address: str):
+async def post_ecrecover_for_hex_message_and_signature(req: Request, msg: str, key: str, address: str, w3_provider: Web3 = Depends(get_w3_provider)):
     logger = req.scope.get("logger")
     logger.debug("/ecrecover_for_hex_message_and_signature")
 
@@ -79,8 +78,29 @@ async def get_ecrecover_for_hex_message_and_signature(req: Request, msg: str, ke
     return ecrecover_for_hex_message_and_signature(hex_message, hex_signature)
 
 
-@router.get("/send_eth")
-async def get_send_eth(req: Request, from_address:str, from_key: str, to_address: str, ether: float):
+@router.post("/send_eth")
+async def post_send_ether(req: Request, from_address:str, from_key: str, to_address: str, ether: float, w3_provider: Web3 = Depends(get_w3_provider)):
     logger = req.scope.get("logger")
     logger.debug("/send_eth")
     return send_eth(w3_provider, from_address, from_key, to_address, ether)
+
+
+@router.post("/call_storage_contract_store_fn")
+async def post_call_storage_contract_store_fn(req: Request, from_address:str, from_key: str, to_address: str, ether: float, contract_address: str, w3_provider: Web3 = Depends(get_w3_provider)):
+    logger = req.scope.get("logger")
+    logger.debug("/call_contract")
+
+    storage_contract = w3_provider.eth.contract(address=contract_address, abi=STORAGE_ABI)
+
+    storage_txn = storage_contract.functions.store(456).buildTransaction({
+        # 'chainId': 1,
+        'gas': 4000000,
+        'gasPrice': w3_provider.toWei('50', 'gwei'),
+        # 'maxFeePerGas': w3_provider.toWei('2', 'gwei'),
+        # 'maxPriorityFeePerGas': w3_provider.toWei('1', 'gwei'),
+        'nonce': w3_provider.eth.getTransactionCount(from_address),
+    })
+
+    tx_hash_hex = tx_sign_and_send(w3_provider, from_key, storage_txn)
+
+    return tx_hash_hex
