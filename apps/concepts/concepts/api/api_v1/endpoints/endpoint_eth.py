@@ -90,6 +90,7 @@ async def post_call_storage_contract_store_fn(req: Request, from_address:str, fr
     logger = req.scope.get("logger")
     logger.debug("/call_contract")
 
+    #TODO: error handling when contract address is nkt right.. etc
     storage_contract = w3_provider.eth.contract(address=contract_address, abi=STORAGE_ABI)
 
     storage_txn = storage_contract.functions.store(456).buildTransaction({

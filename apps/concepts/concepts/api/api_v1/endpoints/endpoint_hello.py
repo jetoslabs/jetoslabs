@@ -1,6 +1,8 @@
-from fastapi import APIRouter
+import aiohttp
+from fastapi import APIRouter, Depends
 from fastapi.requests import Request
 
+from concepts.api.deps import get_http_client
 from concepts.controller import controller
 from concepts.core.server_resources import server_resources
 
@@ -26,9 +28,9 @@ def get_config(req: Request):
 
 
 @router.get("/ping_google")
-async def ping_google(req: Request):
+async def ping_google(req: Request, http_client: aiohttp.ClientSession = Depends(get_http_client)):
     logger = req.scope.get("logger")
     logger.debug("/ping_google")
-    res, body = await controller.ping_google(logger=logger)
+    res, body = await controller.ping_google(http_client, logger=logger)
     return body
 
