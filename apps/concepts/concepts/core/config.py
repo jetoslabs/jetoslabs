@@ -1,5 +1,5 @@
-from concepts.core.settings import settings
 from common.config.config import load_config_folder
+from concepts.core.settings import settings
 
 
 def setup_config():

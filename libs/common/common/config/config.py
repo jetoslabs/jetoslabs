@@ -9,7 +9,7 @@ class ConfigException(BaseException):
     pass
 
 
-def load_config_folder(config_path: str, *, logger=loguru.logger):
+def load_config_folder(config_path: str, *, logger=loguru.logger) -> Config:
     if not os.path.isdir(config_path):
         raise ConfigException("Cannot load config, folder does not exist")
     logger.info(f"Loading Config folder: {config_path}")

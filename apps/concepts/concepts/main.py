@@ -1,11 +1,12 @@
 import uvicorn
 
+from common.web3.web3_provider import get_w3_provider
 from concepts.api.api_v1 import api
+from concepts.core.config import setup_config
 from concepts.core.description import description
 from concepts.core.logger import logger
 from concepts.core.server_resources import server_resources
 from concepts.core.settings import settings
-from common.config.config import load_config_folder
 from common.fastapi_factory.fastapi_factory import FastAPIFactory
 from logger import setup_logger
 
@@ -26,12 +27,15 @@ app = create_app()
 
 @app.on_event("startup")
 async def startup():
+    # Begin with setup logger
     setup_logger()
     # Init all required server_resources fields
-    # setup config
-    server_resources.config = load_config_folder(settings.CONFIGURATION_LOC)
+    # First setup config
+    server_resources.config = setup_config()
     # setup http_client
     server_resources.init_http_client()
+    # setup web3 provider
+    server_resources.web3_provider = get_w3_provider(server_resources.config.SYSTEM.web3.provider_uri)
 
 
 @app.on_event("shutdown")

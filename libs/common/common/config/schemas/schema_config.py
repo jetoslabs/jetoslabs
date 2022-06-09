@@ -30,5 +30,5 @@ class TenantConfig(Tenant):
 
 
 class Config(BaseModel):
-    SYSTEM: TenantConfig
-    tenants: Dict[str, TenantConfig]
+    SYSTEM: Optional[TenantConfig]
+    tenants: Optional[Dict[str, TenantConfig]]
