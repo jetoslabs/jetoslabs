@@ -1,6 +1,6 @@
 from web3 import Web3
 
-from common.web3.eth_account import sign_msg, recover
+from common.web3_client.eth_account import sign_msg, recover
 
 
 def test_sign_and_recover():

@@ -22,7 +22,7 @@ class ServerResources():
         if self.http_client:
             await self.http_client.close()
 
-    def init_http_client(self):
+    def get_http_client(self):
         # TODO: Make this singleton thread/process safe
         if not self.http_client:
             self.http_client = aiohttp.ClientSession()
