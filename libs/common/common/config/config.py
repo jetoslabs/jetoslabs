@@ -37,7 +37,7 @@ def get_config_root(config_path, *, logger=loguru.logger) -> os.path:
     if len(potential_config_roots) != 1:
         raise ConfigException("Cannot load config, multiple config root exit")
     config_root = potential_config_roots.pop()
-    logger.info(f"Found Config root: {config_root}")
+    logger.debug(f"Found Config root: {config_root}")
     return config_root
 
 
@@ -57,7 +57,7 @@ def load_tenant_config(tenant_config_folder_path, *, logger=loguru.logger):
             tenant_config_dict = yaml.safe_load(file)
             tenant_config = TenantConfig(**tenant_config_dict)
             logger.bind(tenant_config_file_path=tenant_config_file_path, tenant_config=tenant_config)\
-                .info(f"Config loaded for tenant - {tenant_config.tenant}")
+                .debug(f"Config loaded for tenant - {tenant_config.tenant}")
             return tenant_config
     except Exception as e:
         raise ConfigException() from e
