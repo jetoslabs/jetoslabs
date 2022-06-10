@@ -24,7 +24,7 @@ def hello(req: Request):
 def get_config(req: Request):
     logger = req.scope.get("logger")
     logger.debug("/config")
-    return server_resources.config
+    return server_resources.get_config()
 
 
 @router.get("/ping_google")

@@ -10,13 +10,15 @@ from concepts.core.resources import server_resources
 
 @lru_cache()
 def get_w3_provider() -> Web3:
-    if not server_resources.web3_provider:
+    provider = server_resources.get_web3_provider()
+    if not provider:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="web3 provider is not available")
-    return server_resources.web3_provider
+    return provider
 
 
-def get_http_client() -> aiohttp.ClientSession:
-    if not server_resources.http_client:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,detail="http client is not available")
-    return server_resources.http_client
+async def get_http_client() -> aiohttp.ClientSession:
+    client = await server_resources.get_http_client()
+    if not client:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="http client is not available")
+    return client
 
