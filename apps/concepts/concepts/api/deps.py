@@ -5,7 +5,7 @@ from fastapi import HTTPException
 from starlette import status
 from web3 import Web3
 
-from concepts.core.server_resources import server_resources
+from concepts.core.resources import server_resources
 
 
 @lru_cache()

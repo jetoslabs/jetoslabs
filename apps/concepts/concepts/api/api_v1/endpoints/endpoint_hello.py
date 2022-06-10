@@ -4,7 +4,7 @@ from fastapi.requests import Request
 
 from concepts.api.deps import get_http_client
 from concepts.controller import controller
-from concepts.core.server_resources import server_resources
+from concepts.core.resources import server_resources
 
 router = APIRouter()
 
