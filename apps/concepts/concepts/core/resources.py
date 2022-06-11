@@ -1,9 +1,11 @@
 from typing import Optional
 
 import aiohttp
+from ipfshttpclient import Client as IPFSClient
 from web3 import Web3
 
 from common.config.schemas.schema_config import Config
+from common.ipfs_client.ipfs_client import close_ipfs_client, new_ipfs_client
 from common.settings.settings import Settings
 from common.web3_client.web3_provider import new_w3_provider
 from concepts.core.config import setup_config
@@ -20,6 +22,7 @@ class ServerResources():
         # TODO: create Resource Type (mirror of config but LazyVar and initialized based on config)
         # TODO: move web3_provider in Resource.system_resource.web3_provider
         self._web3_provider: Optional[Web3] = None
+        self._ipfs_client: Optional[IPFSClient] = None
 
     def setup_server_resources(self, settings: Settings):
         """
@@ -35,6 +38,8 @@ class ServerResources():
     async def close(self):
         if self._http_client:
             await self._http_client.close()
+        if self._ipfs_client:
+            await close_ipfs_client(self._ipfs_client)
 
     def get_config(self):
         return self._config
@@ -55,6 +60,12 @@ class ServerResources():
         if not self._web3_provider:
             self._web3_provider = new_w3_provider(self._config.SYSTEM.web3.provider_uri)
         return self._web3_provider
+
+    def get_ipfs_client(self):
+        # lazy eval
+        if not self._ipfs_client:
+            self._ipfs_client = new_ipfs_client()
+        return self._ipfs_client
 
 
 # Note: Create server resources here and not in main

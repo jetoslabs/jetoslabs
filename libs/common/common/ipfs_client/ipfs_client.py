@@ -2,7 +2,7 @@ import ipfshttpclient
 
 
 def new_ipfs_client():
-    client = ipfshttpclient.connect()
+    client = ipfshttpclient.connect(timeout=10)
     return client
 
 
@@ -24,4 +24,5 @@ def ipfs_add_bytes(client: ipfshttpclient.Client, data: bytes):
 
 def ipfs_get(client: ipfshttpclient.Client, content_hash: str):
     # client = ipfshttpclient.connect()
-    return client.cat(content_hash)
+    content = client.cat(content_hash)
+    return content
