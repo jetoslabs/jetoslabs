@@ -39,7 +39,7 @@ class ServerResources():
         if self._http_client:
             await self._http_client.close()
         if self._ipfs_client:
-            await close_ipfs_client(self._ipfs_client)
+            close_ipfs_client(self._ipfs_client)
 
     def get_config(self):
         return self._config
