@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     CONTACT_EMAIL = "toanuragjha@gmail.com"
     # Uvicorn
     HOST = "localhost"
-    PORT = 8080
+    PORT = 9999
     APP_RELOAD = True
     APP_WORKERS = 1
     API_V1_STR = "v1"
