@@ -25,7 +25,10 @@ async def get_http_client() -> aiohttp.ClientSession:
 
 
 def get_ipfs_client() -> ipfshttpclient.Client:
-    client = server_resources.get_ipfs_client()
-    if not client:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="ipfs client is not available")
+    try:
+        client = server_resources.get_ipfs_client()
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"ipfs client is not available, e = {e}"
+        )
     return client
