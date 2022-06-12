@@ -1,5 +1,6 @@
 from functools import lru_cache
 
+from fastapi.security import OAuth2PasswordBearer
 import aiohttp
 import ipfshttpclient
 from fastapi import HTTPException
@@ -7,6 +8,10 @@ from starlette import status
 from web3 import Web3
 
 from concepts.core.resources import server_resources
+
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/token")
+
 
 
 @lru_cache()
