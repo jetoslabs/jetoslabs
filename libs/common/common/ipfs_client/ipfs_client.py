@@ -22,7 +22,7 @@ def ipfs_add_bytes(client: ipfshttpclient.Client, data: bytes):
     return res
 
 
-def ipfs_get(client: ipfshttpclient.Client, content_hash: str):
+def ipfs_cat(client: ipfshttpclient.Client, content_hash: str):
     # client = ipfshttpclient.connect()
     content = client.cat(content_hash)
     return content

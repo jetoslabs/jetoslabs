@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends
 from fastapi.requests import Request
 from web3 import Web3
 
-from common.ipfs_client.ipfs_client import ipfs_add, ipfs_get, ipfs_add_bytes
+from common.ipfs_client.ipfs_client import ipfs_cat, ipfs_add_bytes
 from common.web3_client import eth_account
 from common.web3_client.eth_account import ecrecover_for_hex_message_and_signature, recover, sign_msg, ecrecover_from_locally_signed_message
 from common.web3_client.eth_tx import send_eth, tx_sign_and_send
@@ -109,12 +109,12 @@ async def post_call_storage_contract_store_fn(req: Request, from_address:str, fr
     return tx_hash_hex
 
 
-@router.post("/ipfs_app")
+@router.post("/ipfs_add")
 async def post_ipfs_add(data: str, ipfs_client=Depends(get_ipfs_client)):
     return ipfs_add_bytes(ipfs_client, data.encode('utf-8'))
 
 
-@router.post("/ipfs_get")
-async def post_ipfs_get(content_hash: str, ipfs_client=Depends(get_ipfs_client)):
-    return ipfs_get(ipfs_client, content_hash)
+@router.post("/ipfs_cat")
+async def post_ipfs_cat(content_hash: str, ipfs_client=Depends(get_ipfs_client)):
+    return ipfs_cat(ipfs_client, content_hash)
 
