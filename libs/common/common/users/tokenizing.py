@@ -18,6 +18,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None, *, s
     # taking a copy of data
     to_encode = data.copy()
     # the JWT specification says that there's a key sub, with the subject of the token.
+    # important thing to have in mind is that the sub key should have a unique identifier across the entire application, and it should be a string.
     if sub: to_encode.update({"sub":sub})
     # adding expires_at field in to_encode
     if not timedelta:
