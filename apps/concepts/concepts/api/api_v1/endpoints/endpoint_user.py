@@ -1,31 +1,40 @@
+from datetime import timedelta
+
 from fastapi import APIRouter, Depends, HTTPException
-from fastapi.requests import Request
 from fastapi.security import OAuth2PasswordRequestForm
 from starlette import status
 
-from common.users.user import User, fake_users_db, UserInDB, fake_hash_password
-from concepts.api.deps import oauth2_scheme, get_current_user
+from common.users.tokenizing import Token, create_access_token
+from common.users.user import authenticate_user, UserInDB, User
+from concepts.api.deps import get_current_user, get_fake_db
 
 router = APIRouter()
 
 
-# @router.get("/sample_login")
-# async def sample_login(req: Request, token: str = Depends(oauth2_scheme)):
-#     return {"token": token}
-
-
 @router.post("/token")
-async def login(form_data: OAuth2PasswordRequestForm = Depends()):
-    user_dict = fake_users_db.get(form_data.username)
-    if not user_dict:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Incorrect username or password")
-    user_in_db: UserInDB = UserInDB(**user_dict)
-    hashed_password = fake_hash_password(form_data.password)
-    if not hashed_password == user_in_db.hashed_password:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Incorrect username or password")
-    return {"access_token": user_in_db.email, "token_type": "bearer"}
+async def login(form_data: OAuth2PasswordRequestForm = Depends()) -> Token:
+    """
+    Authenticate for username and password and then generate and return token for the username
+    :param form_data:
+    :return:
+    """
+    user_in_db: UserInDB | bool = authenticate_user(get_fake_db(), form_data.username, form_data.password)
+    if not isinstance(user_in_db, UserInDB):
+    # if not user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect username or password", headers={"WWW-Authenticate": "Bearer"},)
+
+    expire_delta = timedelta(minutes=15)
+    data_dict = User(**user_in_db.dict()).dict()
+    access_token = create_access_token(data=data_dict, expires_delta=expire_delta)
+
+    token = Token(
+        access_token=access_token,
+        token_type="bearer"
+    )
+
+    return token
 
 
 @router.get("/me")
-async def read_users_me(current_user: User = Depends(get_current_user)):
-    return current_user
+async def read_users_me(current_user: User = Depends(get_current_user)) -> User:
+    return User(**current_user.dict())
