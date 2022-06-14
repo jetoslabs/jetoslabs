@@ -12,12 +12,14 @@ class Token(BaseModel):
     token_type: str
 
 
-def create_access_token(data: dict, expires_delta: timedelta | None = None) -> str:
+def create_access_token(data: dict, expires_delta: timedelta | None = None, *, sub: str = None) -> str:
     SECRET_KEY = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
     ALGORITHM = "HS256"
-
+    # taking a copy of data
     to_encode = data.copy()
-    # add expires_at info
+    # the JWT specification says that there's a key sub, with the subject of the token.
+    if sub: to_encode.update({"sub":sub})
+    # adding expires_at field in to_encode
     if not timedelta:
         expires_at = datetime.utcnow() + timedelta(minutes=15)
     else:

@@ -25,7 +25,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()) -> Token:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect username or password", headers={"WWW-Authenticate": "Bearer"},)
 
     expire_delta = timedelta(minutes=15)
-    data_dict = User(**user_in_db.dict()).dict()
+    data_dict: dict= User(**user_in_db.dict()).dict()
     access_token = create_access_token(data=data_dict, expires_delta=expire_delta)
 
     token = Token(
