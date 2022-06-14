@@ -3,15 +3,32 @@ from functools import lru_cache
 from fastapi.security import OAuth2PasswordBearer
 import aiohttp
 import ipfshttpclient
-from fastapi import HTTPException
+from fastapi import HTTPException, Depends
 from starlette import status
 from web3 import Web3
 
+from common.users.user import fake_decode_token, User
 from concepts.core.resources import server_resources
 
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="v1/user/token")
 
+
+def get_current_user(token: str = Depends(oauth2_scheme)):
+    user = fake_decode_token(token)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid authentication credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    return user
+
+
+def get_current_active_user(current_user: User = Depends(get_current_user)):
+    if current_user.disabled:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Inactive User")
+    return current_user
 
 
 @lru_cache()

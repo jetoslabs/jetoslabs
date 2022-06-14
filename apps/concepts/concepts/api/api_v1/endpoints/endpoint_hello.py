@@ -33,8 +33,3 @@ async def ping_google(req: Request, http_client: aiohttp.ClientSession = Depends
     logger.debug("/ping_google")
     res, body = await controller.ping_google(http_client, logger=logger)
     return body
-
-
-@router.get("/sample_login")
-async def sample_login(req: Request, token: str = Depends(oauth2_scheme)):
-    return {"token": token}
