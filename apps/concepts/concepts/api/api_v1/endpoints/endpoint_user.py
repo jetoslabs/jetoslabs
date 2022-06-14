@@ -5,8 +5,8 @@ from fastapi.security import OAuth2PasswordRequestForm
 from starlette import status
 
 from common.users.schemas import User, UserInDB
-from common.users.tokenizing import Token, create_access_token
-from common.users.user import authenticate_user
+from common.auth.tokenizing import Token
+from common.users.user import authenticate_user, create_user_access_token
 from concepts.api.deps import get_current_user, get_fake_db
 
 router = APIRouter()
@@ -26,7 +26,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()) -> Token:
 
     expire_delta = timedelta(minutes=15)
     data_dict: dict= User(**user_in_db.dict()).dict()
-    access_token = create_access_token(data=data_dict, expires_delta=expire_delta)
+    access_token = create_user_access_token(data=data_dict, expires_delta=expire_delta)
 
     token = Token(
         access_token=access_token,

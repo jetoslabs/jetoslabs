@@ -3,9 +3,6 @@ from datetime import timedelta, datetime
 from jose import jwt, JWTError
 from pydantic import BaseModel
 
-from common.users.schemas import TokenData
-from common.users.user_exceptions import credential_exception
-
 
 class Token(BaseModel):
     access_token: str
@@ -32,15 +29,12 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None, *, s
     return encoded_jwt
 
 
-def decode_access_token(token: str) -> TokenData:
+def decode_access_token(token: str) -> dict:
     SECRET_KEY = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
     ALGORITHM = "HS256"
 
     try:
         payload: dict = jwt.decode(token, SECRET_KEY, ALGORITHM)
-        token_data: TokenData = TokenData(**payload)
-        if not token_data:
-            raise credential_exception
-        return token_data
+        return payload
     except JWTError as e:
-        raise credential_exception
+        raise e

@@ -1,7 +1,11 @@
+from datetime import timedelta
+
+import logger
 from common.users.hashing import verify_password
 from common.users.schemas import UserInDB, User, TokenData
-from common.users.tokenizing import decode_access_token
 from common.users.user_exceptions import credential_exception
+from common.auth.tokenizing import decode_access_token, create_access_token
+
 
 fake_users_db = {
     "johndoe@example.com": {
@@ -34,8 +38,19 @@ def authenticate_user(db, username: str, password: str) -> bool | UserInDB:
     return user
 
 
+def create_user_access_token(data: dict, expires_delta: timedelta | None = None, *, sub: str = None) -> str:
+    access_token: str = create_access_token(data, expires_delta, sub=sub)
+    return access_token
+
+
 def get_current_user_from_token(token: str) -> User:
-    token_data: TokenData = decode_access_token(token)
+    try:
+        token_data_dict: dict = decode_access_token(token)
+    except Exception as e:
+        logger.get_logger().bind(e=e).error("Cannot decode access token")
+        raise credential_exception
+
+    token_data: TokenData = TokenData(**token_data_dict)
     if not token_data.email:
         raise credential_exception
     user = get_user_in_db(fake_users_db, token_data.email)
