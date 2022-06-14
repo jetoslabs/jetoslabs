@@ -4,8 +4,9 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from starlette import status
 
+from common.users.schemas import User, UserInDB
 from common.users.tokenizing import Token, create_access_token
-from common.users.user import authenticate_user, UserInDB, User
+from common.users.user import authenticate_user
 from concepts.api.deps import get_current_user, get_fake_db
 
 router = APIRouter()

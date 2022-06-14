@@ -1,6 +1,7 @@
-from pydantic import BaseModel
-
 from common.users.hashing import verify_password
+from common.users.schemas import UserInDB, User, TokenData
+from common.users.tokenizing import decode_access_token
+from common.users.user_exceptions import credential_exception
 
 fake_users_db = {
     "johndoe@example.com": {
@@ -18,17 +19,7 @@ fake_users_db = {
 }
 
 
-class User(BaseModel):
-    email: str
-    full_name: str | None = None
-    disabled: bool | None = None
-
-
-class UserInDB(User):
-    hashed_password: str
-
-
-def get_user_in_db(db, email:str) -> None | UserInDB:
+def get_user_in_db(db, email: str) -> None | UserInDB:
     if email in db:
         user_dict = db[email]
         return UserInDB(**user_dict)
@@ -40,4 +31,14 @@ def authenticate_user(db, username: str, password: str) -> bool | UserInDB:
         return False
     if not verify_password(password, user.hashed_password):
         return False
+    return user
+
+
+def get_current_user_from_token(token: str) -> User:
+    token_data: TokenData = decode_access_token(token)
+    if not token_data.email:
+        raise credential_exception
+    user = get_user_in_db(fake_users_db, token_data.email)
+    if not user:
+        raise credential_exception
     return user

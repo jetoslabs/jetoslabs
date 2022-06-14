@@ -7,8 +7,7 @@ from fastapi import HTTPException, Depends
 from starlette import status
 from web3 import Web3
 
-from common.users.tokenizing import get_current_user_from_token
-from common.users.user import User, fake_users_db
+from common.users.user import User, fake_users_db, get_current_user_from_token
 from concepts.core.resources import server_resources
 
 
