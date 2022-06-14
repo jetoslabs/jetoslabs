@@ -1,6 +1,7 @@
 from datetime import timedelta
 
-import logger
+from loguru import logger
+
 from common.users.hashing import verify_password
 from common.users.schemas import UserInDB, User, TokenData
 from common.users.user_exceptions import credential_exception
@@ -47,7 +48,7 @@ def get_current_user_from_token(token: str) -> User:
     try:
         token_data_dict: dict = decode_access_token(token)
     except Exception as e:
-        logger.get_logger().bind(e=e).error("Cannot decode access token")
+        logger.bind(e=e).error("Cannot decode access token")
         raise credential_exception
 
     token_data: TokenData = TokenData(**token_data_dict)

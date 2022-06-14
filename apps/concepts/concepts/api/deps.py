@@ -13,34 +13,6 @@ from concepts.core.resources import server_resources
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="v1/user/token")
 
-# credential_exception = HTTPException(
-#             status_code=status.HTTP_401_UNAUTHORIZED,
-#             detail="Invalid authentication credentials",
-#             headers={"WWW-Authenticate": "Bearer"},
-#         )
-
-
-# def get_current_user(token: str = Depends(oauth2_scheme)):
-#     SECRET_KEY = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
-#     ALGORITHM = "HS256"
-#
-#     try:
-#         payload = jwt.decode(token, SECRET_KEY, ALGORITHM)
-#
-#         email: str = payload.get('email')
-#         if not email:
-#             raise credential_exception
-#         token_data = TokenData(
-#             email=email,
-#         )
-#     except JWTError as e:
-#         raise credential_exception
-#
-#     user = get_user(fake_users_db, token_data.email)
-#     if not user:
-#         raise credential_exception
-#     return user
-
 def get_current_user(token: str = Depends(oauth2_scheme)):
     return get_current_user_from_token(token)
 

@@ -1,6 +1,8 @@
 from datetime import timedelta, datetime
 
 from jose import jwt, JWTError
+from loguru import logger
+
 from pydantic import BaseModel
 
 
@@ -32,9 +34,9 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None, *, s
 def decode_access_token(token: str) -> dict:
     SECRET_KEY = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
     ALGORITHM = "HS256"
-
     try:
         payload: dict = jwt.decode(token, SECRET_KEY, ALGORITHM)
         return payload
     except JWTError as e:
+        logger.bind(e=e).error("Cannot decode access token")
         raise e
