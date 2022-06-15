@@ -2,7 +2,7 @@ import aiohttp
 from fastapi import APIRouter, Depends
 from fastapi.requests import Request
 
-from concepts.api.deps import get_http_client, oauth2_scheme
+from concepts.api.deps import get_http_client, oauth2_scheme, get_current_active_admin_user
 from concepts.controller import controller
 from concepts.core.resources import server_resources
 
@@ -20,7 +20,7 @@ def hello(req: Request):
     return "hello"
 
 
-@router.get("/config")
+@router.get("/config",dependencies=[Depends(get_current_active_admin_user)] )
 def get_config(req: Request):
     logger = req.scope.get("logger")
     logger.debug("/config")

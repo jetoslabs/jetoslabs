@@ -14,12 +14,14 @@ fake_users_db = {
         "email": "johndoe@example.com",
         "hashed_password": "$2b$12$MC3tRmHqMCP53ykYF0cy.Oge3dUXPAybs9g8K/8V5Y0sh6grepE..",
         "disabled": False,
+        "is_admin": True,
     },
     "alice@example.com": {
         "full_name": "Alice Wonderson",
         "email": "alice@example.com",
         "hashed_password": "fakehashedsecret2",
         "disabled": True,
+        "is_admin": False,
     },
 }
 
