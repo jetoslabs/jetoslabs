@@ -11,7 +11,7 @@ router = APIRouter()
 Note: Using `Request` in route methods: a. to get logger contextualized by middlewares
 """
 
-@router.get("/s3/bucket/create")
+@router.get("/bucket/create")
 async def create_s3_bucket(req: Request, current_user: User = Depends(get_current_active_admin_user)):
     logger = req.scope.get("logger")
     s3_res = create_bucket(
@@ -24,7 +24,7 @@ async def create_s3_bucket(req: Request, current_user: User = Depends(get_curren
     return s3_res
 
 
-@router.get("/s3/bucket/list")
+@router.get("/bucket/list")
 async def list_s3_bucket(req: Request, current_user: User = Depends(get_current_active_admin_user)):
     logger = req.scope.get("logger")
     s3_res = list_buckets(
@@ -36,7 +36,7 @@ async def list_s3_bucket(req: Request, current_user: User = Depends(get_current_
     return s3_res
 
 
-@router.get("/s3/file/upload")
+@router.get("/file/upload")
 async def upload_s3_file(req: Request, current_user: User = Depends(get_current_active_user)):
     logger = req.scope.get("logger")
     s3_res = upload_file(
@@ -50,7 +50,7 @@ async def upload_s3_file(req: Request, current_user: User = Depends(get_current_
     return s3_res
 
 
-@router.get("/s3/file/download")
+@router.get("/file/download")
 async def download_s3_file(req: Request, current_user: User = Depends(get_current_active_user)):
     logger = req.scope.get("logger")
     s3_res = download_file(

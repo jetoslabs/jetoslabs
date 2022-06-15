@@ -19,8 +19,8 @@ fake_users_db = {
     "alice@example.com": {
         "full_name": "Alice Wonderson",
         "email": "alice@example.com",
-        "hashed_password": "fakehashedsecret2",
-        "disabled": True,
+        "hashed_password": "$2b$12$MC3tRmHqMCP53ykYF0cy.Oge3dUXPAybs9g8K/8V5Y0sh6grepE..",
+        "disabled": False,
         "is_admin": False,
     },
 }
