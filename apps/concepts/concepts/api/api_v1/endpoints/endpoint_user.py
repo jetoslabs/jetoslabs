@@ -7,7 +7,7 @@ from starlette import status
 from common.users.schemas import User, UserInDB
 from common.auth.tokenizing import Token
 from common.users.user import authenticate_user, create_user_access_token
-from concepts.api.deps import get_current_user, get_fake_db
+from concepts.api.deps import get_fake_db, get_current_active_user
 
 router = APIRouter()
 
@@ -36,5 +36,5 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()) -> Token:
 
 
 @router.get("/me")
-async def read_users_me(current_user: User = Depends(get_current_user)) -> User:
+async def read_users_me(current_user: User = Depends(get_current_active_user)) -> User:
     return User(**current_user.dict())

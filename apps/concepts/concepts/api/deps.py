@@ -3,7 +3,7 @@ from functools import lru_cache
 from fastapi.security import OAuth2PasswordBearer
 import aiohttp
 import ipfshttpclient
-from fastapi import HTTPException, Depends
+from fastapi import HTTPException, Depends, Security
 from starlette import status
 from web3 import Web3
 
@@ -13,7 +13,7 @@ from concepts.core.resources import server_resources
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="v1/user/token")
 
 
-def get_current_user(token: str = Depends(oauth2_scheme)):
+def get_current_user(token: str = Security(oauth2_scheme)):
     return get_current_user_from_token(token)
 
 

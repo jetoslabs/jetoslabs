@@ -4,11 +4,12 @@ from fastapi.requests import Request
 from web3 import Web3
 
 from common.ipfs_client.ipfs_client import ipfs_cat, ipfs_add_bytes
+from common.users.schemas import User
 from common.web3_client import eth_account
 from common.web3_client.eth_account import ecrecover_for_hex_message_and_signature, recover, sign_msg, ecrecover_from_locally_signed_message
 from common.web3_client.eth_tx import send_eth, tx_sign_and_send
 from concepts.abi.abi import STORAGE_ABI
-from concepts.api.deps import get_w3_provider, get_ipfs_client
+from concepts.api.deps import get_w3_provider, get_ipfs_client, get_current_active_user
 
 from concepts.schemas.schemas_account import NewAccountReq, NewAccountRes, GenAccountRes, GenAccountReq
 
@@ -20,7 +21,11 @@ Note: Using `Request` in route methods: a. to get logger contextualized by middl
 
 
 @router.post("/new_account", response_model=NewAccountRes)
-async def post_new_account(req: Request, req_body: NewAccountReq) -> NewAccountRes:
+async def post_new_account(
+        req: Request,
+        req_body: NewAccountReq,
+        current_user: User = Depends(get_current_active_user)
+) -> NewAccountRes:
     logger = req.scope.get("logger")
     logger.debug("/new_account")
     account, mnemonic = await eth_account.create_with_mnemonic(req_body.passphrase)
@@ -34,7 +39,11 @@ async def post_new_account(req: Request, req_body: NewAccountReq) -> NewAccountR
 
 
 @router.post("/gen_account", response_model=GenAccountRes)
-async def post_gen_account(req: Request, req_body: GenAccountReq) -> GenAccountRes:
+async def post_gen_account(
+        req: Request,
+        req_body: GenAccountReq,
+        current_user: User = Depends(get_current_active_user)
+) -> GenAccountRes:
     logger = req.scope.get("logger")
     logger.debug("/gen_account")
     account = await eth_account.gen_from_mnemonic(req_body.mnemonic, req_body.passphrase)
@@ -48,7 +57,14 @@ async def post_gen_account(req: Request, req_body: GenAccountReq) -> GenAccountR
 
 
 @router.post("/ecrecover_from_locally_signed_message")
-async def post_ecrecover_from_locally_signed_message(req: Request, msg: str, key: str, address: str, w3_provider: Web3 = Depends(get_w3_provider)):
+async def post_ecrecover_from_locally_signed_message(
+        req: Request,
+        msg: str,
+        key: str,
+        address: str,
+        w3_provider: Web3 = Depends(get_w3_provider),
+        current_user: User = Depends(get_current_active_user),
+):
     logger = req.scope.get("logger")
     logger.debug("/ecrecover_from_locally_signed_message")
 
@@ -64,7 +80,13 @@ async def post_ecrecover_from_locally_signed_message(req: Request, msg: str, key
 
 
 @router.post("/ecrecover_for_hex_message_and_signature")
-async def post_ecrecover_for_hex_message_and_signature(req: Request, msg: str, key: str, address: str, w3_provider: Web3 = Depends(get_w3_provider)):
+async def post_ecrecover_for_hex_message_and_signature(
+        req: Request,
+        msg: str,
+        key: str,
+        address: str, w3_provider: Web3 = Depends(get_w3_provider),
+        current_user: User = Depends(get_current_active_user),
+):
     logger = req.scope.get("logger")
     logger.debug("/ecrecover_for_hex_message_and_signature")
 
@@ -81,14 +103,31 @@ async def post_ecrecover_for_hex_message_and_signature(req: Request, msg: str, k
 
 
 @router.post("/send_eth")
-async def post_send_ether(req: Request, from_address:str, from_key: str, to_address: str, ether: float, w3_provider: Web3 = Depends(get_w3_provider)):
+async def post_send_ether(
+        req: Request,
+        from_address:str,
+        from_key: str,
+        to_address: str,
+        ether: float,
+        w3_provider: Web3 = Depends(get_w3_provider),
+        current_user: User = Depends(get_current_active_user),
+):
     logger = req.scope.get("logger")
     logger.debug("/send_eth")
     return send_eth(w3_provider, from_address, from_key, to_address, ether)
 
 
 @router.post("/call_storage_contract_store_fn")
-async def post_call_storage_contract_store_fn(req: Request, from_address:str, from_key: str, to_address: str, ether: float, contract_address: str, w3_provider: Web3 = Depends(get_w3_provider)):
+async def post_call_storage_contract_store_fn(
+        req: Request,
+        from_address:str,
+        from_key: str,
+        to_address: str,
+        ether: float,
+        contract_address: str,
+        w3_provider: Web3 = Depends(get_w3_provider),
+        current_user: User = Depends(get_current_active_user),
+):
     logger = req.scope.get("logger")
     logger.debug("/call_contract")
 
@@ -107,14 +146,4 @@ async def post_call_storage_contract_store_fn(req: Request, from_address:str, fr
     tx_hash_hex = tx_sign_and_send(w3_provider, from_key, storage_txn)
 
     return tx_hash_hex
-
-
-@router.post("/ipfs_add")
-async def post_ipfs_add(data: str, ipfs_client=Depends(get_ipfs_client)):
-    return ipfs_add_bytes(ipfs_client, data.encode('utf-8'))
-
-
-@router.post("/ipfs_cat")
-async def post_ipfs_cat(content_hash: str, ipfs_client=Depends(get_ipfs_client)):
-    return ipfs_cat(ipfs_client, content_hash)
 
