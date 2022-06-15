@@ -41,14 +41,14 @@ def authenticate_user(db, username: str, password: str) -> bool | UserInDB:
     return user
 
 
-def create_user_access_token(data: dict, expires_delta: timedelta | None = None, *, sub: str = None) -> str:
-    access_token: str = create_access_token(data, expires_delta, sub=sub)
+def create_user_access_token(secret_key: str, algorithm: str, data: dict, expires_delta: timedelta | None = None, *, sub: str = None) -> str:
+    access_token: str = create_access_token(secret_key, algorithm, data, expires_delta, sub=sub)
     return access_token
 
 
-def get_current_user_from_token(token: str) -> User:
+def get_current_user_from_token(secret_key: str, algorithm: str, token: str) -> User:
     try:
-        token_data_dict: dict = decode_access_token(token)
+        token_data_dict: dict = decode_access_token(secret_key, algorithm, token)
     except Exception as e:
         logger.bind(e=e).error("Cannot decode access token")
         raise credential_exception
