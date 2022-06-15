@@ -21,7 +21,6 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()) -> Token:
     """
     user_in_db: UserInDB | bool = authenticate_user(get_fake_db(), form_data.username, form_data.password)
     if not isinstance(user_in_db, UserInDB):
-    # if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect username or password", headers={"WWW-Authenticate": "Bearer"},)
 
     expire_delta = timedelta(minutes=15)
