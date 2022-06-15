@@ -9,14 +9,17 @@ class FastAPIFactory:
     @staticmethod
     def create_app(settings: Settings, logger: loguru.logger):
         app = FastAPI(
-            title=settings.NAME,
-            description=settings.DESCRIPTION,
-            version=settings.VERSION,
-            contact={
-                "name": settings.CONTACT_NAME,
-                "url": settings.CONTACT_URL,
-                "email": settings.CONTACT_EMAIL,
-            }
+            # title=settings.NAME,
+            # description=settings.DESCRIPTION,
+            # version=settings.VERSION,
+            # contact={
+            #     "name": settings.CONTACT_NAME,
+            #     "url": settings.CONTACT_URL,
+            #     "email": settings.CONTACT_EMAIL,
+            # },
+            docs_url=None,
+            redoc_url=None,
+            openapi_url=None,
         )
 
         # Add common Middleware routers

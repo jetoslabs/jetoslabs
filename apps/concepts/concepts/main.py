@@ -1,4 +1,7 @@
 import uvicorn
+from fastapi.openapi.docs import get_swagger_ui_html
+from fastapi.openapi.utils import get_openapi
+from starlette.responses import JSONResponse
 
 from concepts.api.api_v1 import api
 from concepts.core.description import description
@@ -34,6 +37,28 @@ async def startup():
 @app.on_event("shutdown")
 async def shutdown():
     await server_resources.close()
+
+
+@app.get("/openapi.json", tags=["documentation"])
+async def get_open_api_endpoint():
+    response = JSONResponse(
+        get_openapi(
+            title=settings.NAME,
+            version=settings.VERSION,
+            description=description,
+            contact={
+                "name": settings.CONTACT_NAME,
+                "url": settings.CONTACT_URL,
+                "email": settings.CONTACT_EMAIL,
+            },
+            routes=app.routes)
+    )
+    return response
+
+@app.get("/docs", tags=["documentation"])
+async def get_documentation():
+    response = get_swagger_ui_html(openapi_url="/openapi.json", title="docs")
+    return response
 
 
 if __name__ == "__main__":
