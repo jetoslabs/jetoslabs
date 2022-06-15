@@ -18,13 +18,13 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None, *, s
     to_encode = data.copy()
     # the JWT specification says that there's a key sub, with the subject of the token.
     # important thing to have in mind is that the sub key should have a unique identifier across the entire application, and it should be a string.
-    if sub: to_encode.update({"sub":sub})
+    if sub: to_encode.update({"sub": sub})
     # adding expires_at field in to_encode
     if not timedelta:
         expires_at = datetime.utcnow() + timedelta(minutes=15)
     else:
         expires_at = datetime.utcnow() + expires_delta
-    expires_at_encodable = expires_at.isoformat() # jwt.encode throws exception for datetime.datetime instance type
+    expires_at_encodable = expires_at.isoformat()  # jwt.encode throws exception for datetime.datetime instance type
     to_encode.update({"expires_at": expires_at_encodable})
     # encode claim set and return jwt string
     encoded_jwt: str = jwt.encode(claims=to_encode, key=SECRET_KEY, algorithm=ALGORITHM)
