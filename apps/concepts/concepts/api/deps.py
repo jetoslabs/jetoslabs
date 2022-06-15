@@ -10,12 +10,11 @@ from web3 import Web3
 from common.users.user import User, fake_users_db, get_current_user_from_token
 from concepts.core.resources import server_resources
 
-
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="v1/user/token")
+
 
 def get_current_user(token: str = Depends(oauth2_scheme)):
     return get_current_user_from_token(token)
-
 
 
 def get_current_active_user(current_user: User = Depends(get_current_user)):
