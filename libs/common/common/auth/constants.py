@@ -1,0 +1,1 @@
+TOKEN_TYPE_BEARER="bearer"

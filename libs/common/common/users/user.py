@@ -46,7 +46,7 @@ def create_user_access_token(secret_key: str, algorithm: str, data: dict, expire
     return access_token
 
 
-def get_current_user_from_token(secret_key: str, algorithm: str, token: str) -> User:
+def get_user_from_token(secret_key: str, algorithm: str, token: str) -> User:
     try:
         token_data_dict: dict = decode_access_token(secret_key, algorithm, token)
     except Exception as e:
@@ -56,7 +56,7 @@ def get_current_user_from_token(secret_key: str, algorithm: str, token: str) -> 
     token_data: TokenData = TokenData(**token_data_dict)
     if not token_data.email:
         raise credential_exception
-    user = get_user_in_db(fake_users_db, token_data.email)
-    if not user:
+    user_in_db: UserInDB = get_user_in_db(fake_users_db, token_data.email)
+    if not user_in_db:
         raise credential_exception
-    return user
+    return User(**user_in_db.dict())
