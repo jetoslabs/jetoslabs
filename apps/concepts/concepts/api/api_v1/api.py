@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
 from concepts.api.api_v1.endpoints import endpoint_hello, endpoint_eth, endpoint_s3, endpoint_user, endpoint_admin, \
-    endpoint_ipfs, endpoint_web, endpoint_docs
+    endpoint_ipfs, endpoint_web
 
 router = APIRouter()
 # router.include_router(router=endpoint_docs.router, tags=["docs"])
