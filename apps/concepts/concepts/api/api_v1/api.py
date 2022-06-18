@@ -4,7 +4,6 @@ from concepts.api.api_v1.endpoints import endpoint_hello, endpoint_eth, endpoint
     endpoint_ipfs, endpoint_web
 
 router = APIRouter()
-# router.include_router(router=endpoint_docs.router, tags=["docs"])
 router.include_router(router=endpoint_hello.router, prefix="/hello", tags=["hello"])
 router.include_router(router=endpoint_user.router, prefix="/user", tags=["user"])
 router.include_router(router=endpoint_admin.router, prefix="/admin", tags=["admin"])
