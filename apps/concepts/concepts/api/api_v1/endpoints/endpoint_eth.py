@@ -4,7 +4,8 @@ from web3 import Web3
 
 from common.users.schemas import User
 from common.web3_client import eth_account
-from common.web3_client.eth_account import ecrecover_for_hex_message_and_signature, recover, sign_msg, ecrecover_from_locally_signed_message
+from common.web3_client.eth_account import ecrecover_for_hex_message_and_signature, recover, sign_msg, \
+    ecrecover_from_locally_signed_message
 from common.web3_client.eth_tx import send_eth, tx_sign_and_send
 from concepts.abi.abi import STORAGE_ABI
 from concepts.api.deps import get_w3_provider, get_current_active_user

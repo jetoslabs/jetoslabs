@@ -44,6 +44,6 @@ async def read_users_me(current_user: User = Depends(get_current_active_user)) -
     return User(**current_user.dict())
 
 
-@router.post("/me1")
-async def read_users_me(current_user: User = Depends(get_current_user_from_api_key)):
-    return current_user
+# @router.post("/me1")
+# async def read_users_me(current_user: User = Depends(get_current_user_from_api_key)):
+#     return current_user
