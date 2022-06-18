@@ -7,7 +7,7 @@ from concepts.core.resources import server_resources
 router = APIRouter()
 
 
-@router.get("/config",dependencies=[Depends(get_current_active_admin_user)] )
+@router.get("/config", dependencies=[Depends(get_current_active_admin_user)])
 def get_config(req: Request):
     logger = req.scope.get("logger")
     logger.debug("/config")

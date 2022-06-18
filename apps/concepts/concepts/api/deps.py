@@ -7,14 +7,13 @@ from fastapi import HTTPException, Security
 from starlette import status
 from web3 import Web3
 
-from common.auth.constants import TOKEN_TYPE_BEARER
+from common.auth.constants import TOKEN_TYPE_BEARER, API_KEY
 from common.users.user import User, fake_users_db, get_user_from_token
 from concepts.core.resources import server_resources
 from concepts.core.settings import settings
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="v1/user/token")
 
-API_KEY = "access_token"
 api_key_header_scheme = APIKeyHeader(name=API_KEY, auto_error=False)
 api_key_cookie_scheme = APIKeyCookie(name=API_KEY, auto_error=False)
 

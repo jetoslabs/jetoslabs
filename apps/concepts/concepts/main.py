@@ -1,9 +1,13 @@
+from pathlib import Path
+
 import uvicorn
+from fastapi import Security
 from fastapi.openapi.docs import get_swagger_ui_html
 from fastapi.openapi.utils import get_openapi
 from starlette.responses import JSONResponse
 
 from concepts.api.api_v1 import api
+from concepts.api.deps import get_current_active_admin_user_from_api_key
 from concepts.core.description import description
 from concepts.core.logger import logger
 from concepts.core.resources import server_resources
@@ -20,6 +24,8 @@ def create_app():
     app = FastAPIFactory.create_app(settings, logger)
     # Add application specific router
     app.include_router(router=api.router, prefix=f"/{settings.API_V1_STR}")
+    app.include_router(router=api.web_router)
+    server_resources._api_routes = api.router.routes
     return app
 
 
@@ -31,7 +37,8 @@ async def startup():
     # Begin with setup logger
     setup_logger()
     # Init all required server_resources fields
-    server_resources.setup_server_resources(settings)
+    base_path = Path(__file__).resolve().parent
+    server_resources.setup_server_resources(base_path, settings)
 
 
 @app.on_event("shutdown")
@@ -39,8 +46,8 @@ async def shutdown():
     await server_resources.close()
 
 
-@app.get("/openapi.json", tags=["documentation"])
-async def get_open_api_endpoint():
+@app.get("/openapi.json", tags=["docs"])
+async def get_open_api_endpoint(user=Security(get_current_active_admin_user_from_api_key)):
     response = JSONResponse(
         get_openapi(
             title=settings.NAME,
@@ -55,8 +62,9 @@ async def get_open_api_endpoint():
     )
     return response
 
-@app.get("/docs", tags=["documentation"])
-async def get_documentation():
+
+@app.get("/docs", tags=["docs"])
+async def get_documentation(user=Security(get_current_active_admin_user_from_api_key)):
     response = get_swagger_ui_html(openapi_url="/openapi.json", title="docs")
     return response
 
